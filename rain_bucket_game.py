@@ -22,12 +22,12 @@ game_over = False
 score = 0
 
 # Raindrop settings
-RAINSIZE = 50
+RAINSIZE = 10
 rain_list = []
 
 # Game settings
-SPEED = 5
-AMOUNT = 10
+SPEED = 1
+AMOUNT = 5
 
 # Main game loop
 while not game_over:
