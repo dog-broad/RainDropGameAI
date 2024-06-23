@@ -1,11 +1,12 @@
-# Raindrops Game
+# Rain Bucket Game
 
-This is a simple pygame-based game where raindrops fall from the top of the screen, and the player scores points by avoiding them to fall off the bottom.
+This is a simple pygame-based game where raindrops fall from the top of the screen, and the player controls a bucket to catch them, scoring points for each successful catch.
 
 ## Features
 
 - Randomly generated raindrops that fall from the top of the screen.
-- Score tracking for each raindrop that falls off the screen.
+- Bucket controlled by arrow keys to catch raindrops.
+- Score tracking for each raindrop caught.
 - Adjustable game speed to control the difficulty.
 
 ## Requirements
@@ -28,19 +29,7 @@ This is a simple pygame-based game where raindrops fall from the top of the scre
 ## How to Play
 
 - Run the game by executing `python rain_bucket_game.py`.
-- Use the arrow keys to move the player character (if added in future versions).
-
-## Controls
-
-- Arrow keys (if added in future versions).
-
-#### Screenshots (Optional)
-
-- Include screenshots of the game in action, if desired.
-
-#### Future Improvements (Optional)
-
-- List any planned improvements or features you intend to add.
+- Use the left and right arrow keys to move the bucket horizontally to catch raindrops.
 
 ---
 
@@ -52,8 +41,8 @@ This is a simple pygame-based game where raindrops fall from the top of the scre
 - Added functionality for raindrops to fall from the top of the screen.
 - Implemented score tracking for each raindrop that falls off the screen.
 
-#### Version 0.2 (Planned)
+#### Version 0.2 (Current Version)
 
-- Add player character movement.
-- Implement collision detection.
-- Introduce levels or difficulty settings.
+- Added player-controlled bucket to catch raindrops.
+- Implemented collision detection between bucket and raindrops.
+- Introduced adjustable game speed to control the falling rate of raindrops.
