@@ -19,7 +19,7 @@ YELLOW = (255, 255, 0)
 score = 0
 speed = 5
 raindrop_frequency = 25
-bucket_speed = 10
+bucket_speed = 15
 
 # Set up the screen
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -63,7 +63,7 @@ def show_start_screen():
                     return
 
 # Main game loop
-def game_loop():
+def game_loop(game_duration):
     global score
     bucket_rect = pygame.Rect(WIDTH // 2 - 40, HEIGHT - 80, 80, 80)
     raindrops = []
@@ -114,11 +114,11 @@ def game_loop():
 
         # Display time remaining
         elapsed_time = (pygame.time.get_ticks() - start_time) // 1000
-        time_text = font.render(f'Time: {60 - elapsed_time}', True, BLUE)
+        time_text = font.render(f'Time: {game_duration - elapsed_time}', True, BLUE)
         screen.blit(time_text, (WIDTH - 120, 10))
 
         # Check game end condition
-        if elapsed_time >= 60:
+        if elapsed_time >= game_duration:
             game_over_text = large_font.render("Game Over", True, BLUE)
             game_over_rect = game_over_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
             screen.blit(game_over_text, game_over_rect)
@@ -136,7 +136,7 @@ def game_loop():
 
 # Game execution
 show_start_screen()
-game_loop()
+game_loop(30)  # Set the game duration here (in seconds)
 
 pygame.quit()
 sys.exit()
