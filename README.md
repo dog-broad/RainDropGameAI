@@ -1,3 +1,5 @@
+### README.md
+
 # Rain Bucket Game
 
 This is a simple pygame-based game where raindrops fall from the top of the screen, and the player controls a bucket to catch them, scoring points for each successful catch within a limited time.
@@ -6,6 +8,7 @@ This is a simple pygame-based game where raindrops fall from the top of the scre
 
 - Randomly generated raindrops that fall from the top of the screen.
 - Bucket controlled by arrow keys to catch raindrops.
+- AI-controlled option to automatically move the bucket towards the nearest raindrop.
 - Score tracking for each raindrop caught.
 - Adjustable game speed to control the difficulty.
 - Game over condition after a specified duration.
@@ -31,12 +34,19 @@ This is a simple pygame-based game where raindrops fall from the top of the scre
 
 - Run the game by executing `python rain_bucket_game.py`.
 - Use the left and right arrow keys to move the bucket horizontally to catch raindrops within the given time limit.
+- Alternatively, enable AI mode to automatically control the bucket.
 
 ---
 
 ### Changelog
 
-#### Version 1 (Current Version)
+#### Version 2 (Current Version)
+
+- Added AI control option for the bucket, automatically moving towards the closest raindrop.
+- Improved Start Screen.
+- Updated scoring system to reflect AI-controlled catches.
+
+#### Version 1
 
 - Added game over condition after a specified duration (default 30 seconds).
 - Enhanced user interface with a start screen featuring a clickable start button.

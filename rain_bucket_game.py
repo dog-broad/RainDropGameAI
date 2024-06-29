@@ -62,8 +62,20 @@ def show_start_screen():
                 if start_button.collidepoint(event.pos):
                     return
 
-# Main game loop
-def game_loop(game_duration):
+# Function to control the bucket based on AI logic
+def ai_control(bucket_rect, raindrops):
+    if raindrops:
+        # Find the raindrop closest to the bucket's center
+        closest_raindrop = min(raindrops, key=lambda raindrop: abs(raindrop['rect'].centerx - bucket_rect.centerx))
+        
+        # Move the bucket towards the closest raindrop
+        if closest_raindrop['rect'].centerx < bucket_rect.centerx:
+            bucket_rect.move_ip(-bucket_speed, 0)
+        elif closest_raindrop['rect'].centerx > bucket_rect.centerx:
+            bucket_rect.move_ip(bucket_speed, 0)
+
+# Main game loop with AI control option
+def game_loop(game_duration, ai_enabled=False):
     global score
     bucket_rect = pygame.Rect(WIDTH // 2 - 40, HEIGHT - 80, 80, 80)
     raindrops = []
@@ -84,6 +96,17 @@ def game_loop(game_duration):
         for raindrop in raindrops:
             raindrop['rect'].move_ip(0, raindrop['speed'])
 
+        # AI control or player control
+        if ai_enabled:
+            ai_control(bucket_rect, raindrops)
+        else:
+            # Move bucket based on user input
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_LEFT] and bucket_rect.left > 0:
+                bucket_rect.move_ip(-bucket_speed, 0)
+            if keys[pygame.K_RIGHT] and bucket_rect.right < WIDTH:
+                bucket_rect.move_ip(bucket_speed, 0)
+
         # Check collision with bucket
         for raindrop in raindrops[:]:
             if bucket_rect.colliderect(raindrop['rect']):
@@ -94,13 +117,6 @@ def game_loop(game_duration):
         for raindrop in raindrops[:]:
             if raindrop['rect'].top > HEIGHT:
                 raindrops.remove(raindrop)
-
-        # Move bucket based on user input
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT] and bucket_rect.left > 0:
-            bucket_rect.move_ip(-bucket_speed, 0)
-        if keys[pygame.K_RIGHT] and bucket_rect.right < WIDTH:
-            bucket_rect.move_ip(bucket_speed, 0)
 
         # Draw everything
         screen.fill(WHITE)
@@ -134,9 +150,9 @@ def game_loop(game_duration):
         pygame.display.flip()
         clock.tick(FPS)
 
-# Game execution
+# Game execution with AI enabled
 show_start_screen()
-game_loop(30)  # Set the game duration here (in seconds)
+game_loop(60, ai_enabled=True)  # Enable AI control for the game
 
 pygame.quit()
 sys.exit()
