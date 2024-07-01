@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+import math
 
 # Initialize Pygame
 pygame.init()
@@ -17,9 +18,8 @@ YELLOW = (255, 255, 0)
 
 # Game variables
 score = 0
-speed = 5
 raindrop_frequency = 25
-bucket_speed = 15
+bucket_speed = 10  # Adjusted for smoother movement
 
 # Set up the screen
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -34,7 +34,8 @@ large_font = pygame.font.SysFont(None, 72)
 def create_raindrop():
     x = random.randint(0, WIDTH - 30)
     y = random.randint(-HEIGHT, 0)
-    return {'rect': pygame.Rect(x, y, 30, 30), 'speed': random.randint(5, 15)}
+    speed = random.randint(5, 15)
+    return {'rect': pygame.Rect(x, y, 30, 30), 'speed': speed, 'falling': True, 'direction': random.choice([-1, 1])}
 
 # Function to display start screen
 def show_start_screen():
@@ -62,20 +63,12 @@ def show_start_screen():
                 if start_button.collidepoint(event.pos):
                     return
 
-# Function to control the bucket based on AI logic
-def ai_control(bucket_rect, raindrops):
-    if raindrops:
-        # Find the raindrop closest to the bucket's center
-        closest_raindrop = min(raindrops, key=lambda raindrop: abs(raindrop['rect'].centerx - bucket_rect.centerx))
-        
-        # Move the bucket towards the closest raindrop
-        if closest_raindrop['rect'].centerx < bucket_rect.centerx:
-            bucket_rect.move_ip(-bucket_speed, 0)
-        elif closest_raindrop['rect'].centerx > bucket_rect.centerx:
-            bucket_rect.move_ip(bucket_speed, 0)
+# Function to calculate distance between two points
+def distance(point1, point2):
+    return math.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)
 
-# Main game loop with AI control option
-def game_loop(game_duration, ai_enabled=False):
+# Main game loop with advanced AI control
+def game_loop(game_duration):
     global score
     bucket_rect = pygame.Rect(WIDTH // 2 - 40, HEIGHT - 80, 80, 80)
     raindrops = []
@@ -94,22 +87,21 @@ def game_loop(game_duration, ai_enabled=False):
 
         # Move raindrops
         for raindrop in raindrops:
-            raindrop['rect'].move_ip(0, raindrop['speed'])
+            if raindrop['falling']:
+                raindrop['rect'].move_ip(0, raindrop['speed'])
 
-        # AI control or player control
-        if ai_enabled:
-            ai_control(bucket_rect, raindrops)
-        else:
-            # Move bucket based on user input
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_LEFT] and bucket_rect.left > 0:
+        # AI control
+        if raindrops:
+            closest_raindrop = min(raindrops, key=lambda r: distance(r['rect'].center, bucket_rect.center))
+            target_x = closest_raindrop['rect'].centerx
+            if target_x < bucket_rect.centerx and bucket_rect.left > 0:
                 bucket_rect.move_ip(-bucket_speed, 0)
-            if keys[pygame.K_RIGHT] and bucket_rect.right < WIDTH:
+            elif target_x > bucket_rect.centerx and bucket_rect.right < WIDTH:
                 bucket_rect.move_ip(bucket_speed, 0)
 
         # Check collision with bucket
         for raindrop in raindrops[:]:
-            if bucket_rect.colliderect(raindrop['rect']):
+            if raindrop['rect'].colliderect(bucket_rect):
                 raindrops.remove(raindrop)
                 score += 1
 
@@ -150,9 +142,9 @@ def game_loop(game_duration, ai_enabled=False):
         pygame.display.flip()
         clock.tick(FPS)
 
-# Game execution with AI enabled
+# Game execution with advanced AI
 show_start_screen()
-game_loop(60, ai_enabled=True)  # Enable AI control for the game
+game_loop(60)  # Set the game duration here (in seconds)
 
 pygame.quit()
 sys.exit()

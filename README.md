@@ -1,5 +1,3 @@
-### README.md
-
 # Rain Bucket Game
 
 This is a simple pygame-based game where raindrops fall from the top of the screen, and the player controls a bucket to catch them, scoring points for each successful catch within a limited time.
@@ -8,7 +6,7 @@ This is a simple pygame-based game where raindrops fall from the top of the scre
 
 - Randomly generated raindrops that fall from the top of the screen.
 - Bucket controlled by arrow keys to catch raindrops.
-- AI-controlled option to automatically move the bucket towards the nearest raindrop.
+- AI-controlled option to automatically move the bucket towards the nearest raindrop using heuristic rules.
 - Score tracking for each raindrop caught.
 - Adjustable game speed to control the difficulty.
 - Game over condition after a specified duration.
@@ -21,11 +19,13 @@ This is a simple pygame-based game where raindrops fall from the top of the scre
 ## Installation
 
 1. Clone the repository:
+   
    ```
    git clone <repository-url>
    ```
 
 2. Install pygame:
+   
    ```
    pip install pygame
    ```
@@ -34,13 +34,20 @@ This is a simple pygame-based game where raindrops fall from the top of the scre
 
 - Run the game by executing `python rain_bucket_game.py`.
 - Use the left and right arrow keys to move the bucket horizontally to catch raindrops within the given time limit.
-- Alternatively, enable AI mode to automatically control the bucket.
+- Alternatively, enable AI mode to automatically control the bucket using heuristic rules.
 
 ---
 
 ### Changelog
 
-#### Version 2 (Current Version)
+#### Version 2.1 (Current Version)
+
+- Enhanced AI control using heuristic rules:
+  - Distance Calculation: Calculates the distance between each raindrop and the bucket.
+  - Direction Prediction: Predicts the direction of each raindrop's movement (left or right).
+  - Optimal Bucket Movement: Moves the bucket towards the predicted landing position of the closest raindrop.
+
+#### Version 2
 
 - Added AI control option for the bucket, automatically moving towards the closest raindrop.
 - Improved Start Screen.
