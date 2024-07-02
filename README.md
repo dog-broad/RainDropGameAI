@@ -40,7 +40,12 @@ This is a simple pygame-based game where raindrops fall from the top of the scre
 
 ### Changelog
 
-#### Version 2.1 (Current Version)
+#### Version 2.2 (Current Version)
+
+- Add control mode selection to start screen
+- Refactor code to separate Human and AI control modes
+
+#### Version 2.1
 
 - Enhanced AI control using heuristic rules:
   - Distance Calculation: Calculates the distance between each raindrop and the bucket.

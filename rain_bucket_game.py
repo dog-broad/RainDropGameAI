@@ -21,6 +21,10 @@ score = 0
 raindrop_frequency = 25
 bucket_speed = 10  # Adjusted for smoother movement
 
+# Control modes
+HUMAN_CONTROL = 0
+AI_CONTROL = 1
+
 # Set up the screen
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Rain Bucket Game")
@@ -37,38 +41,45 @@ def create_raindrop():
     speed = random.randint(5, 15)
     return {'rect': pygame.Rect(x, y, 30, 30), 'speed': speed, 'falling': True, 'direction': random.choice([-1, 1])}
 
-# Function to display start screen
+# Function to display start screen and select control mode
 def show_start_screen():
     screen.fill(WHITE)
     start_text = large_font.render("Rain Bucket Game", True, BLUE)
     start_rect = start_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
     screen.blit(start_text, start_rect)
 
-    start_button = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 50, 200, 50)
-    pygame.draw.rect(screen, BLUE, start_button)
-    start_button_text = font.render("Start Game", True, WHITE)
-    start_button_text_rect = start_button_text.get_rect(center=start_button.center)
-    screen.blit(start_button_text, start_button_text_rect)
+    human_button = pygame.Rect(WIDTH // 2 - 150, HEIGHT // 2 + 50, 200, 50)
+    pygame.draw.rect(screen, BLUE, human_button)
+    human_button_text = font.render("Human Control", True, WHITE)
+    human_button_text_rect = human_button_text.get_rect(center=human_button.center)
+    screen.blit(human_button_text, human_button_text_rect)
+
+    ai_button = pygame.Rect(WIDTH // 2 + 50, HEIGHT // 2 + 50, 200, 50)
+    pygame.draw.rect(screen, BLUE, ai_button)
+    ai_button_text = font.render("AI Control", True, WHITE)
+    ai_button_text_rect = ai_button_text.get_rect(center=ai_button.center)
+    screen.blit(ai_button_text, ai_button_text_rect)
 
     pygame.display.flip()
 
-    # Wait for the player to click start
-    waiting = True
-    while waiting:
+    # Wait for the player to click on a control mode
+    while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                if start_button.collidepoint(event.pos):
-                    return
+                if human_button.collidepoint(event.pos):
+                    return HUMAN_CONTROL
+                elif ai_button.collidepoint(event.pos):
+                    return AI_CONTROL
 
 # Function to calculate distance between two points
 def distance(point1, point2):
     return math.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)
 
-# Main game loop with advanced AI control
-def game_loop(game_duration):
+# Main game loop with human or AI control based on player choice
+def game_loop(game_duration, control_mode):
     global score
     bucket_rect = pygame.Rect(WIDTH // 2 - 40, HEIGHT - 80, 80, 80)
     raindrops = []
@@ -90,14 +101,23 @@ def game_loop(game_duration):
             if raindrop['falling']:
                 raindrop['rect'].move_ip(0, raindrop['speed'])
 
-        # AI control
-        if raindrops:
-            closest_raindrop = min(raindrops, key=lambda r: distance(r['rect'].center, bucket_rect.center))
-            target_x = closest_raindrop['rect'].centerx
-            if target_x < bucket_rect.centerx and bucket_rect.left > 0:
+        # Human control
+        if control_mode == HUMAN_CONTROL:
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_LEFT] and bucket_rect.left > 0:
                 bucket_rect.move_ip(-bucket_speed, 0)
-            elif target_x > bucket_rect.centerx and bucket_rect.right < WIDTH:
+            if keys[pygame.K_RIGHT] and bucket_rect.right < WIDTH:
                 bucket_rect.move_ip(bucket_speed, 0)
+
+        # AI control
+        elif control_mode == AI_CONTROL:
+            if raindrops:
+                closest_raindrop = min(raindrops, key=lambda r: distance(r['rect'].center, bucket_rect.center))
+                target_x = closest_raindrop['rect'].centerx
+                if target_x < bucket_rect.centerx and bucket_rect.left > 0:
+                    bucket_rect.move_ip(-bucket_speed, 0)
+                elif target_x > bucket_rect.centerx and bucket_rect.right < WIDTH:
+                    bucket_rect.move_ip(bucket_speed, 0)
 
         # Check collision with bucket
         for raindrop in raindrops[:]:
@@ -142,9 +162,10 @@ def game_loop(game_duration):
         pygame.display.flip()
         clock.tick(FPS)
 
-# Game execution with advanced AI
+# Game execution with option for Human or AI controls
+control_mode = show_start_screen()
 show_start_screen()
-game_loop(60)  # Set the game duration here (in seconds)
+game_loop(60, control_mode)  # Set the game duration here (in seconds)
 
 pygame.quit()
 sys.exit()
