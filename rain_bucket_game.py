@@ -19,7 +19,7 @@ YELLOW = (255, 255, 0)
 # Game variables
 score = 0
 raindrop_frequency = 25
-bucket_speed = 10  # Adjusted for smoother movement
+bucket_speed = 15  # Adjusted for smoother movement
 
 # Control modes
 HUMAN_CONTROL = 0

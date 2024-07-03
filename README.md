@@ -40,7 +40,11 @@ This is a simple pygame-based game where raindrops fall from the top of the scre
 
 ### Changelog
 
-#### Version 2.3 (Current Version)
+#### Version 2.4 (Current Version)
+
+- Adjust bucket speed for smoother movement
+
+#### Version 2.3 
 
 - The game can be now played with the human and AI control modes.
 - Added game over screen with return to menu option.
