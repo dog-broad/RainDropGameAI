@@ -40,7 +40,13 @@ This is a simple pygame-based game where raindrops fall from the top of the scre
 
 ### Changelog
 
-#### Version 2.2 (Current Version)
+#### Version 2.3 (Current Version)
+
+- The game can be now played with the human and AI control modes.
+- Added game over screen with return to menu option.
+- Improved look and feel of the start screen.
+
+#### Version 2.2 
 
 - Add control mode selection to start screen
 - Refactor code to separate Human and AI control modes

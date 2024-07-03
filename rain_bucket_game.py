@@ -45,16 +45,16 @@ def create_raindrop():
 def show_start_screen():
     screen.fill(WHITE)
     start_text = large_font.render("Rain Bucket Game", True, BLUE)
-    start_rect = start_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
+    start_rect = start_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 100))
     screen.blit(start_text, start_rect)
 
-    human_button = pygame.Rect(WIDTH // 2 - 150, HEIGHT // 2 + 50, 200, 50)
+    human_button = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2, 200, 50)
     pygame.draw.rect(screen, BLUE, human_button)
     human_button_text = font.render("Human Control", True, WHITE)
     human_button_text_rect = human_button_text.get_rect(center=human_button.center)
     screen.blit(human_button_text, human_button_text_rect)
 
-    ai_button = pygame.Rect(WIDTH // 2 + 50, HEIGHT // 2 + 50, 200, 50)
+    ai_button = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 70, 200, 50)
     pygame.draw.rect(screen, BLUE, ai_button)
     ai_button_text = font.render("AI Control", True, WHITE)
     ai_button_text_rect = ai_button_text.get_rect(center=ai_button.center)
@@ -73,6 +73,35 @@ def show_start_screen():
                     return HUMAN_CONTROL
                 elif ai_button.collidepoint(event.pos):
                     return AI_CONTROL
+
+# Function to display game over screen with return to menu option
+def show_game_over_screen():
+    screen.fill(WHITE)
+    game_over_text = large_font.render("Game Over", True, BLUE)
+    game_over_rect = game_over_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
+    screen.blit(game_over_text, game_over_rect)
+
+    final_score_text = font.render(f'Final Score: {score}', True, BLUE)
+    final_score_rect = final_score_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+    screen.blit(final_score_text, final_score_rect)
+
+    return_button = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 50, 200, 50)
+    pygame.draw.rect(screen, BLUE, return_button)
+    return_button_text = font.render("Return to Menu", True, WHITE)
+    return_button_text_rect = return_button_text.get_rect(center=return_button.center)
+    screen.blit(return_button_text, return_button_text_rect)
+
+    pygame.display.flip()
+
+    # Wait for the player to click on return to menu
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if return_button.collidepoint(event.pos):
+                    return True  # Return to menu
 
 # Function to calculate distance between two points
 def distance(point1, point2):
@@ -147,25 +176,17 @@ def game_loop(game_duration, control_mode):
 
         # Check game end condition
         if elapsed_time >= game_duration:
-            game_over_text = large_font.render("Game Over", True, BLUE)
-            game_over_rect = game_over_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
-            screen.blit(game_over_text, game_over_rect)
-
-            final_score_text = font.render(f'Final Score: {score}', True, BLUE)
-            final_score_rect = final_score_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 50))
-            screen.blit(final_score_text, final_score_rect)
-
-            pygame.display.flip()
-            pygame.time.delay(3000)  # Pause for 3 seconds
-            return
+            if show_game_over_screen():
+                return True  # Return to menu
 
         pygame.display.flip()
         clock.tick(FPS)
 
 # Game execution with option for Human or AI controls
-control_mode = show_start_screen()
-show_start_screen()
-game_loop(60, control_mode)  # Set the game duration here (in seconds)
+while True:
+    control_mode = show_start_screen()
+    if game_loop(60, control_mode):  # Set the game duration here (in seconds)
+        continue  # Return to menu
 
 pygame.quit()
 sys.exit()
