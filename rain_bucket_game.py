@@ -15,6 +15,8 @@ FPS = 60
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
+RED = (255, 0, 0)  # Color for Human Control bucket
+GREEN = (0, 255, 0)  # Color for AI Control bucket
 
 # Game variables
 score = 0
@@ -49,13 +51,13 @@ def show_start_screen():
     screen.blit(start_text, start_rect)
 
     human_button = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2, 200, 50)
-    pygame.draw.rect(screen, BLUE, human_button)
+    pygame.draw.rect(screen, RED, human_button)  # Red color for Human Control button
     human_button_text = font.render("Human Control", True, WHITE)
     human_button_text_rect = human_button_text.get_rect(center=human_button.center)
     screen.blit(human_button_text, human_button_text_rect)
 
     ai_button = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 70, 200, 50)
-    pygame.draw.rect(screen, BLUE, ai_button)
+    pygame.draw.rect(screen, GREEN, ai_button)  # Green color for AI Control button
     ai_button_text = font.render("AI Control", True, WHITE)
     ai_button_text_rect = ai_button_text.get_rect(center=ai_button.center)
     screen.blit(ai_button_text, ai_button_text_rect)
@@ -107,9 +109,24 @@ def show_game_over_screen():
 def distance(point1, point2):
     return math.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)
 
+# AI control logic
+def ai_control(bucket_rect, raindrops):
+    if raindrops:
+        closest_raindrop = min(raindrops, key=lambda r: distance(r['rect'].center, bucket_rect.center))
+        target_x = closest_raindrop['rect'].centerx
+        if target_x < bucket_rect.centerx and bucket_rect.left > 0:
+            bucket_rect.move_ip(-bucket_speed, 0)
+        elif target_x > bucket_rect.centerx and bucket_rect.right < WIDTH:
+            bucket_rect.move_ip(bucket_speed, 0)
+
 # Main game loop with human or AI control based on player choice
 def game_loop(game_duration, control_mode):
     global score
+    if control_mode == HUMAN_CONTROL:
+        bucket_color = RED
+    elif control_mode == AI_CONTROL:
+        bucket_color = GREEN
+
     bucket_rect = pygame.Rect(WIDTH // 2 - 40, HEIGHT - 80, 80, 80)
     raindrops = []
     start_time = pygame.time.get_ticks()
@@ -140,13 +157,7 @@ def game_loop(game_duration, control_mode):
 
         # AI control
         elif control_mode == AI_CONTROL:
-            if raindrops:
-                closest_raindrop = min(raindrops, key=lambda r: distance(r['rect'].center, bucket_rect.center))
-                target_x = closest_raindrop['rect'].centerx
-                if target_x < bucket_rect.centerx and bucket_rect.left > 0:
-                    bucket_rect.move_ip(-bucket_speed, 0)
-                elif target_x > bucket_rect.centerx and bucket_rect.right < WIDTH:
-                    bucket_rect.move_ip(bucket_speed, 0)
+            ai_control(bucket_rect, raindrops)
 
         # Check collision with bucket
         for raindrop in raindrops[:]:
@@ -161,7 +172,7 @@ def game_loop(game_duration, control_mode):
 
         # Draw everything
         screen.fill(WHITE)
-        pygame.draw.rect(screen, BLUE, bucket_rect)  # Draw bucket
+        pygame.draw.rect(screen, bucket_color, bucket_rect)  # Draw bucket with respective color
         for raindrop in raindrops:
             pygame.draw.circle(screen, YELLOW, raindrop['rect'].center, 15)  # Draw raindrop
 

@@ -40,7 +40,13 @@ This is a simple pygame-based game where raindrops fall from the top of the scre
 
 ### Changelog
 
-#### Version 2.5 (Current Version)
+#### Version 2.6 (Current Version)
+
+- Added bucket colors for human and AI control
+- Refactored code to separate Human and AI control modes
+- Improved user interface
+
+#### Version 2.5
 
 - Update game duration to 30 seconds in game loop
 
