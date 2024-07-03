@@ -185,7 +185,7 @@ def game_loop(game_duration, control_mode):
 # Game execution with option for Human or AI controls
 while True:
     control_mode = show_start_screen()
-    if game_loop(60, control_mode):  # Set the game duration here (in seconds)
+    if game_loop(30, control_mode):  # Set the game duration here (in seconds)
         continue  # Return to menu
 
 pygame.quit()
