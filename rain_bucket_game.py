@@ -188,6 +188,8 @@ def game_loop(game_duration, control_mode):
         # Check game end condition
         if elapsed_time >= game_duration:
             if show_game_over_screen():
+                # Reset score
+                score = 0
                 return True  # Return to menu
 
         pygame.display.flip()
