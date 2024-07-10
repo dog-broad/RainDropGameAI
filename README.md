@@ -45,6 +45,12 @@ Welcome to the Rain Bucket Game! This is a simple arcade-style game developed us
 
 ### Changelog
 
+#### Version 2.8 (Current Version)
+
+- Add sound effects for game events
+  - A water drop sound effect is played when a raindrop is caught by the bucket
+  - Game Over sound effect is played when the game ends
+
 #### Version 2.7
 
 - The score is reset to 0 when the game ends to ensure a fresh start for the next game. (Bug fix for version 2.6)

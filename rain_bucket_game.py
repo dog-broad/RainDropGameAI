@@ -5,6 +5,7 @@ import math
 
 # Initialize Pygame
 pygame.init()
+pygame.mixer.init()  # Initialize sound mixer
 
 # Constants
 WIDTH = 800
@@ -17,6 +18,10 @@ BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 RED = (255, 0, 0)  # Color for Human Control bucket
 GREEN = (0, 255, 0)  # Color for AI Control bucket
+
+# Sound effects
+game_over_sound = pygame.mixer.Sound('./assets/game_over_sound.wav')
+catch_sound = pygame.mixer.Sound('./assets/catch_sound.wav')
 
 # Game variables
 score = 0
@@ -164,6 +169,7 @@ def game_loop(game_duration, control_mode):
             if raindrop['rect'].colliderect(bucket_rect):
                 raindrops.remove(raindrop)
                 score += 1
+                catch_sound.play()  # Play catch sound
 
         # Remove raindrops that go off screen
         for raindrop in raindrops[:]:
@@ -187,6 +193,7 @@ def game_loop(game_duration, control_mode):
 
         # Check game end condition
         if elapsed_time >= game_duration:
+            game_over_sound.play()  # Play game over sound
             if show_game_over_screen():
                 # Reset score
                 score = 0
