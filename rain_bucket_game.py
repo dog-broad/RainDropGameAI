@@ -41,7 +41,7 @@ clock = pygame.time.Clock()
 
 # Fonts
 font = pygame.font.SysFont(None, 36)
-large_font = pygame.font.SysFont(None, 72)
+large_font = pygame.font.SysFont(None, 64)
 
 # Function to create raindrops
 def create_raindrop():
@@ -65,6 +65,16 @@ def show_game_over_screen():
     ai_score_text = font.render(f'AI Score: {score_ai}', True, GREEN)
     ai_score_rect = ai_score_text.get_rect(center=(WIDTH // 4 * 3, HEIGHT // 2))
     screen.blit(ai_score_text, ai_score_rect)
+
+    if score_human > score_ai:
+        result_text = large_font.render("Human Wins!", True, RED)
+    elif score_ai > score_human:
+        result_text = large_font.render("AI Wins!", True, GREEN)
+    else:
+        result_text = large_font.render("It's a Tie!", True, BLUE)
+    
+    result_rect = result_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 50))
+    screen.blit(result_text, result_rect)
 
     return_button = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 120, 200, 50)
     pygame.draw.rect(screen, BLUE, return_button)
