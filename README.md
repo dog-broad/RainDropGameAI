@@ -1,14 +1,16 @@
-# 🌧️ Rain Bucket Game 🪣
+# 🌧️ Rain Bucket Game - Human vs. AI 🪣
 
-Welcome to the Rain Bucket Game! This is a simple arcade-style game developed using Python's pygame library. The objective is to catch raindrops using a bucket controlled either by the player or an AI, scoring points for each successful catch within a limited time.
+Welcome to the Rain Bucket Game! This is an arcade-style game developed using Python's pygame library, now featuring both Human and AI modes. The objective remains the same: catch raindrops using a bucket and score points within a limited time.
 
 ## Features ✨
 
 - Randomly generated raindrops fall from the top of the screen ☔
-- Use arrow keys (for Human Control) or an AI heuristic (for AI Control) to move the bucket and catch raindrops 🎮
-- Score tracking for each raindrop caught 🌟
+- **Human Control Mode**: Use arrow keys to move your bucket and catch raindrops 🎮
+- **AI Control Mode**: Let the AI move the bucket using heuristic rules to catch raindrops automatically 🤖
+- Separate scoring for Human and AI players, displayed during and after the game 🌟
 - Adjustable game speed to control difficulty ⏩
 - Game over condition after a specified duration ⏳
+- Sound effects for catching raindrops and game over events 🔊
 
 ## Requirements 🛠️
 
@@ -33,19 +35,27 @@ Welcome to the Rain Bucket Game! This is a simple arcade-style game developed us
 
 1. **Run the game** by executing `python rain_bucket_game.py`.
    
-2. **Select Control Mode**:
-   - **Human Control**: Use the left and right arrow keys to move the bucket horizontally.
-   - **AI Control**: Let the AI automatically move the bucket towards the nearest raindrop using heuristic rules.
+2. **Start the Game**:
+   - Click on **Start Game** on the main menu to begin.
+   
+3. **Select Control Mode**:
+   - **Human Control**: Use the left and right arrow keys to move the human bucket.
+   - **AI Control**: Watch as the AI automatically moves its bucket to catch raindrops based on heuristic rules.
 
-3. **Catch Raindrops**: Position the bucket to catch falling raindrops. Each catch earns you points.
+4. **Catch Raindrops**: Position your bucket(s) to catch falling raindrops. Each catch earns points for the respective player (Human or AI).
 
-4. **Game Over**: The game ends after a specified duration. You can return to the menu to play again.
+5. **Game Over**: The game ends after 30 seconds. You can return to the menu to play again.
 
 ---
 
 ### Changelog
 
-#### Version 2.8 (Current Version)
+#### Version 2.9 (Current Version)
+
+- Users can now play against an AI
+- Game Over screen now displays final score and game result
+
+#### Version 2.8 
 
 - Add sound effects for game events
   - A water drop sound effect is played when a raindrop is caught by the bucket
