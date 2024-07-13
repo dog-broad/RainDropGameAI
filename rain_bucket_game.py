@@ -20,21 +20,23 @@ RED = (255, 0, 0)  # Color for Human Control bucket
 GREEN = (0, 255, 0)  # Color for AI Control bucket
 
 # Sound effects
-game_over_sound = pygame.mixer.Sound('./assets/game_over_sound.wav')
-catch_sound = pygame.mixer.Sound('./assets/catch_sound.wav')
+try:
+    game_over_sound = pygame.mixer.Sound('./assets/game_over_sound.wav')
+    catch_sound = pygame.mixer.Sound('./assets/catch_sound.wav')
+except pygame.error as e:
+    print(f"Sound file error: {e}")
+    game_over_sound = None
+    catch_sound = None
 
 # Game variables
-score = 0
+score_human = 0
+score_ai = 0
 raindrop_frequency = 25
 bucket_speed = 15  # Adjusted for smoother movement
 
-# Control modes
-HUMAN_CONTROL = 0
-AI_CONTROL = 1
-
 # Set up the screen
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Rain Bucket Game")
+pygame.display.set_caption("Rain Bucket Game - Human vs. AI")
 clock = pygame.time.Clock()
 
 # Fonts
@@ -48,51 +50,23 @@ def create_raindrop():
     speed = random.randint(5, 15)
     return {'rect': pygame.Rect(x, y, 30, 30), 'speed': speed, 'falling': True, 'direction': random.choice([-1, 1])}
 
-# Function to display start screen and select control mode
-def show_start_screen():
-    screen.fill(WHITE)
-    start_text = large_font.render("Rain Bucket Game", True, BLUE)
-    start_rect = start_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 100))
-    screen.blit(start_text, start_rect)
-
-    human_button = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2, 200, 50)
-    pygame.draw.rect(screen, RED, human_button)  # Red color for Human Control button
-    human_button_text = font.render("Human Control", True, WHITE)
-    human_button_text_rect = human_button_text.get_rect(center=human_button.center)
-    screen.blit(human_button_text, human_button_text_rect)
-
-    ai_button = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 70, 200, 50)
-    pygame.draw.rect(screen, GREEN, ai_button)  # Green color for AI Control button
-    ai_button_text = font.render("AI Control", True, WHITE)
-    ai_button_text_rect = ai_button_text.get_rect(center=ai_button.center)
-    screen.blit(ai_button_text, ai_button_text_rect)
-
-    pygame.display.flip()
-
-    # Wait for the player to click on a control mode
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                if human_button.collidepoint(event.pos):
-                    return HUMAN_CONTROL
-                elif ai_button.collidepoint(event.pos):
-                    return AI_CONTROL
-
 # Function to display game over screen with return to menu option
 def show_game_over_screen():
+    global score_human, score_ai
     screen.fill(WHITE)
     game_over_text = large_font.render("Game Over", True, BLUE)
     game_over_rect = game_over_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
     screen.blit(game_over_text, game_over_rect)
 
-    final_score_text = font.render(f'Final Score: {score}', True, BLUE)
-    final_score_rect = final_score_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
-    screen.blit(final_score_text, final_score_rect)
+    human_score_text = font.render(f'Human Score: {score_human}', True, RED)
+    human_score_rect = human_score_text.get_rect(center=(WIDTH // 4, HEIGHT // 2))
+    screen.blit(human_score_text, human_score_rect)
 
-    return_button = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 50, 200, 50)
+    ai_score_text = font.render(f'AI Score: {score_ai}', True, GREEN)
+    ai_score_rect = ai_score_text.get_rect(center=(WIDTH // 4 * 3, HEIGHT // 2))
+    screen.blit(ai_score_text, ai_score_rect)
+
+    return_button = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 120, 200, 50)
     pygame.draw.rect(screen, BLUE, return_button)
     return_button_text = font.render("Return to Menu", True, WHITE)
     return_button_text_rect = return_button_text.get_rect(center=return_button.center)
@@ -124,15 +98,12 @@ def ai_control(bucket_rect, raindrops):
         elif target_x > bucket_rect.centerx and bucket_rect.right < WIDTH:
             bucket_rect.move_ip(bucket_speed, 0)
 
-# Main game loop with human or AI control based on player choice
-def game_loop(game_duration, control_mode):
-    global score
-    if control_mode == HUMAN_CONTROL:
-        bucket_color = RED
-    elif control_mode == AI_CONTROL:
-        bucket_color = GREEN
+# Game loop for Human vs. AI mode
+def game_loop_human_vs_ai(game_duration):
+    global score_human, score_ai
 
-    bucket_rect = pygame.Rect(WIDTH // 2 - 40, HEIGHT - 80, 80, 80)
+    bucket_rect_human = pygame.Rect(WIDTH // 4 - 40, HEIGHT - 80, 80, 80)
+    bucket_rect_ai = pygame.Rect(WIDTH // 4 * 3 - 40, HEIGHT - 80, 80, 80)
     raindrops = []
     start_time = pygame.time.get_ticks()
     game_over = False
@@ -153,23 +124,30 @@ def game_loop(game_duration, control_mode):
                 raindrop['rect'].move_ip(0, raindrop['speed'])
 
         # Human control
-        if control_mode == HUMAN_CONTROL:
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_LEFT] and bucket_rect.left > 0:
-                bucket_rect.move_ip(-bucket_speed, 0)
-            if keys[pygame.K_RIGHT] and bucket_rect.right < WIDTH:
-                bucket_rect.move_ip(bucket_speed, 0)
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT] and bucket_rect_human.left > 0:
+            bucket_rect_human.move_ip(-bucket_speed, 0)
+        if keys[pygame.K_RIGHT] and bucket_rect_human.right < WIDTH:
+            bucket_rect_human.move_ip(bucket_speed, 0)
 
         # AI control
-        elif control_mode == AI_CONTROL:
-            ai_control(bucket_rect, raindrops)
+        ai_control(bucket_rect_ai, raindrops)
 
-        # Check collision with bucket
+        # Check collision with human bucket
         for raindrop in raindrops[:]:
-            if raindrop['rect'].colliderect(bucket_rect):
+            if raindrop['rect'].colliderect(bucket_rect_human):
                 raindrops.remove(raindrop)
-                score += 1
-                catch_sound.play()  # Play catch sound
+                score_human += 1
+                if catch_sound:
+                    catch_sound.play()  # Play catch sound
+
+        # Check collision with AI bucket
+        for raindrop in raindrops[:]:
+            if raindrop['rect'].colliderect(bucket_rect_ai):
+                raindrops.remove(raindrop)
+                score_ai += 1
+                if catch_sound:
+                    catch_sound.play()  # Play catch sound
 
         # Remove raindrops that go off screen
         for raindrop in raindrops[:]:
@@ -178,13 +156,18 @@ def game_loop(game_duration, control_mode):
 
         # Draw everything
         screen.fill(WHITE)
-        pygame.draw.rect(screen, bucket_color, bucket_rect)  # Draw bucket with respective color
+        pygame.draw.rect(screen, RED, bucket_rect_human)  # Draw human bucket
+        pygame.draw.rect(screen, GREEN, bucket_rect_ai)  # Draw AI bucket
         for raindrop in raindrops:
             pygame.draw.circle(screen, YELLOW, raindrop['rect'].center, 15)  # Draw raindrop
 
-        # Display score
-        score_text = font.render(f'Score: {score}', True, BLUE)
-        screen.blit(score_text, (10, 10))
+        # Display human score
+        score_human_text = font.render(f'Human Score: {score_human}', True, RED)
+        screen.blit(score_human_text, (10, 10))
+
+        # Display AI score
+        score_ai_text = font.render(f'AI Score: {score_ai}', True, GREEN)
+        screen.blit(score_ai_text, (WIDTH // 2 + 10, 10))
 
         # Display time remaining
         elapsed_time = (pygame.time.get_ticks() - start_time) // 1000
@@ -193,20 +176,47 @@ def game_loop(game_duration, control_mode):
 
         # Check game end condition
         if elapsed_time >= game_duration:
-            game_over_sound.play()  # Play game over sound
+            if game_over_sound:
+                game_over_sound.play()  # Play game over sound
             if show_game_over_screen():
-                # Reset score
-                score = 0
+                # Reset scores
+                score_human = 0
+                score_ai = 0
                 return True  # Return to menu
 
         pygame.display.flip()
         clock.tick(FPS)
 
-# Game execution with option for Human or AI controls
+# Function to display start screen and select game mode
+def show_start_screen():
+    screen.fill(WHITE)
+    start_text = large_font.render("Rain Bucket Game - Human vs. AI", True, BLUE)
+    start_rect = start_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 100))
+    screen.blit(start_text, start_rect)
+
+    start_button = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2, 200, 50)
+    pygame.draw.rect(screen, BLUE, start_button)
+    start_button_text = font.render("Start Game", True, WHITE)
+    start_button_text_rect = start_button_text.get_rect(center=start_button.center)
+    screen.blit(start_button_text, start_button_text_rect)
+
+    pygame.display.flip()
+
+    # Wait for the player to click on start game
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if start_button.collidepoint(event.pos):
+                    return True
+
+# Main game execution loop
 while True:
-    control_mode = show_start_screen()
-    if game_loop(30, control_mode):  # Set the game duration here (in seconds)
-        continue  # Return to menu
+    if show_start_screen():
+        if game_loop_human_vs_ai(30):  # Set the game duration here (in seconds)
+            continue  # Return to menu
 
 pygame.quit()
 sys.exit()
